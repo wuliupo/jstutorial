@@ -14,7 +14,26 @@ SVG图像可以用专门的图像软件生成。目前，所有主流浏览器�
 
 ## 插入文件
 
-SVG插入网页的方法有多种，可以直接把SVG代码写在HTML网页里面，也可以用在`<img>`、`<object>`、`<embed>`、`<iframe>`等标签，以及CSS的`background-image`属性。
+SVG插入网页的方法有多种，可以直接把SVG代码写在HTML网页里面。
+
+```html
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+<svg
+  id="mysvg"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 800 600"
+  preserveAspectRatio="xMidYMid meet"
+>
+  <circle id="mycircle" cx="400" cy="300" r="50" />
+<svg>
+</body>
+</html>
+```
+
+SVG代码也可以写在一个独立文件中，然后用在`<img>`、`<object>`、`<embed>`、`<iframe>`等标签，以及CSS的`background-image`属性，将这个文件插入网页。
 
 ```html
 <!-- 方法一 -->
@@ -75,18 +94,26 @@ SVG文件采用XML格式，就是普通的文本文件。下面是一个例子�
 
 上面代码中，`fill`属性表示填充色，`stroke`属性表示描边色，`stroke-width`属性表示边框宽度。
 
-除了circle标签表示圆，SVG文件还可以使用表示其他形状的标签。
+除了`<circle>`标签表示圆，SVG文件还可以使用表示其他形状的标签。
 
 ```html
 <svg>
+  <!-- 直线 -->
   <line x1="0" y1="0" x2="200" y2="0" style="stroke:rgb(0,0,0);stroke-width:1"/>
+  <!-- 矩形 -->
   <rect x="0" y="0" height="100" width="200" style="stroke: #70d5dd; fill: #dd524b" />
+  <!-- 椭圆 -->
   <ellipse cx="60" cy="60" ry="40" rx="20" stroke="black" stroke-width="5" fill="silver"/>  <polygon fill="green" stroke="orange" stroke-width="10" points="350, 75  379,161 469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161"/><polygon>
+  <!-- 多边形 -->
+  <polygon points="60,20 100,40 100,80 60,100 20,80 20,40"/>
+  <!-- 路径 -->
   <path id="path1" d="M160.143,196c0,0,62.777-28.033,90-17.143c71.428,28.572,73.952-25.987,84.286-21.428" style="fill:none;stroke:2;"></path>
+  <!-- 文本 -->
+  <text x="250" y="25">Hello World</text>
 </svg>
 ```
 
-上面代码中，`line`、`rect`、`ellipse`、`polygon`和`path`标签，分别表示线条、矩形、椭圆、多边形和路径。
+上面代码中，`line`、`rect`、`ellipse`、`polygon`和`path`标签，分别表示线条、矩形、椭圆、多边形、路径和文字。
 
 `g`标签用于将多个形状组成一组（group）。
 
@@ -111,6 +138,49 @@ SVG文件里面还可以插入图片文件。
 ```
 
 上面代码中，`viewBox`表示长宽比例，这里是1：1（即正方形），第一对`width`和`height`表示图形默认的宽和高（CSS代码可以覆盖掉这两个值），`xlink:href`表示引用图像的来源，第二对`width`和`height`表示图像占满整个SVG图形，`preserveAspectRatio`等于`xMidYMid slice`，告诉浏览器置中图片，并且删去溢出的部分，更多参数可以参考[MDN](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/preserveAspectRatio)。
+
+## DOM 操作
+
+如果SVG代码直接写在HTML网页之中，它就成为网页DOM的一部分，可以直接用DOM操作。
+
+```html
+<svg
+  id="mysvg"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 800 600"
+  preserveAspectRatio="xMidYMid meet"
+>
+  <circle id="mycircle" cx="400" cy="300" r="50" />
+<svg>
+```
+
+上面代码插入网页之后，就可以用CSS定制样式。
+
+```css
+circle {
+  stroke-width: 5;
+  stroke: #f00;
+  fill: #ff0;
+}
+
+circle:hover {
+  stroke: #090;
+  fill: #fff;
+}
+```
+
+然后，可以用JavaScript代码操作SVG文件。
+
+```javascript
+var mycircle = document.getElementById('mycircle');
+
+mycircle.addEventListener('click', function(e) {
+  console.log('circle clicked - enlarging');
+  mycircle.setAttributeNS(null, 'r', 60);
+}, false);
+```
+
+上面代码指定，如果点击图形，就改写`circle`元素的`r`属性。
 
 ## JavaScript操作
 

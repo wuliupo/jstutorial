@@ -78,7 +78,9 @@ function add(x, y) {
 }
 ```
 
-在上面代码中，`Function`构造函数接受三个参数，除了最后一个参数是`add`函数的“函数体”，其他参数都是`add`函数的参数。如果只有一个参数，该参数就是函数体。
+在上面代码中，`Function`构造函数接受三个参数，除了最后一个参数是`add`函数的“函数体”，其他参数都是`add`函数的参数。
+
+你可以传递任意数量的参数给`Function`构造函数，只有最后一个参数会被当做函数体，如果只有一个参数，该参数就是函数体。
 
 ```javascript
 var foo = new Function(
@@ -325,7 +327,7 @@ function f() {/*
   多行注释
 */}
 
-multiline(f.toString())
+multiline(f);
 // " 这是一个
 //   多行注释"
 ```
@@ -845,7 +847,7 @@ function Person(name) {
   };
 }
 
-var p1 = person('张三');
+var p1 = Person('张三');
 p1.setAge(25);
 p1.getAge() // 25
 ```

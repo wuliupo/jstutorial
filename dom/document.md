@@ -35,9 +35,7 @@ doctype.name // "html"
 
 `document.firstChild`通常就返回这个节点。
 
-`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。
-
-对于HTML网页，该属性返回HTML节点，代表`<html lang="en">`。
+`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。对于HTML网页，该属性返回`<html>`节点，代表`<html lang="en">`。
 
 `document.defaultView`属性，在浏览器中返回`document`对象所在的`window`对象，否则返回`null`。
 
@@ -47,13 +45,14 @@ document.defaultView === window // true
 
 ### document.body，document.head
 
-`document.body`属性返回当前文档的body或frameset节点，如果不存在这样的节点，就返回null。这个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
-
-`document.head`属性返回当前文档的head节点。如果当前文档有多个head，则返回第一个。
+`document.head`属性返回当前文档的`<head>`节点，`document.body`属性返回当前文档的`<body>`。
 
 ```javascript
-document.head === document.querySelector('head')
+document.head === document.querySelector('head') // true
+document.body === document.querySelector('body') // true
 ```
+
+这两个属性总是存在的，如果网页源码里面省略了`<head>`或`<body>`，浏览器会自动创造。另外，这两个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
 
 ### document.activeElement
 
@@ -164,7 +163,7 @@ document.documentURI === document.URL
 // true
 ```
 
-另外，如果文档的锚点（`#anchor`）变化，这两个属性都不会跟着变化。但是，`document.location`会跟着变化。
+另外，如果文档的锚点（`#anchor`）变化，这两个属性都不会跟着变化，它们的值是静态的。但是，`document.location`会跟着变化，`document.location`总是返回最新的URL，会跟踪锚点的变化。
 
 ### document.domain
 
@@ -270,6 +269,8 @@ document.location === window.location // true
 
 `document.referrer`属性返回一个字符串，表示当前文档的访问来源，如果是无法获取来源或是用户直接键入网址，而不是从其他网页点击，则返回一个空字符串。
 
+`document.referrer`的值，总是与HTTP头信息的`Referer`保持一致，但是它的拼写有两个`r`。
+
 `document.title`属性返回当前文档的标题，该属性是可写的。
 
 ```javascript
@@ -314,8 +315,14 @@ var interval = setInterval(function() {
 
 `document.designMode`属性控制当前文档是否可编辑，通常用在制作所见即所得编辑器。打开`iframe`元素包含的文档的`designMode`属性，就能将其变为一个所见即所得的编辑器。
 
-```javascript
-iframe_node.contentDocument.designMode = 'on';
+```html
+<iframe id="editor" src="about:blank"></iframe>
+<script>
+onLoad(function () {
+  var editor = document.getElementById('editor');
+  editor.contentDocument.designMode = 'on';
+});
+</script>
 ```
 
 ### document.implementation
@@ -362,23 +369,29 @@ document.write('world');
 document.close();
 ```
 
-如果页面已经解析完成（DOMContentLoaded事件发生之后），再调用`write`方法，它会先调用`open`方法，擦除当前文档所有内容，然后再写入。
+注意，`document.write`会当作HTML代码解析，不会转义。
 
 ```javascript
-document.addEventListener("DOMContentLoaded", function(event) {
+document.write('<p>hello world</p>');
+```
+
+如果页面已经解析完成（`DOMContentLoaded`事件发生之后），再调用`write`方法，它会先调用`open`方法，擦除当前文档所有内容，然后再写入。
+
+```javascript
+document.addEventListener('DOMContentLoaded', function (event) {
   document.write('<p>Hello World!</p>');
 });
 
 // 等同于
 
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener('DOMContentLoaded', function (event) {
   document.open();
   document.write('<p>Hello World!</p>');
   document.close();
 });
 ```
 
-如果在页面渲染过程中调用`write`方法，并不会调用`open`方法。（可以理解成，open方法已调用，但close方法还未调用。）
+如果在页面渲染过程中调用`write`方法，并不会调用`open`方法。（可以理解成，`open`方法已调用，但`close`方法还未调用。）
 
 ```html
 <html>
@@ -391,29 +404,9 @@ hello
 </html>
 ```
 
-在浏览器打开上面网页，将会显示“hello world”。
+在浏览器打开上面网页，将会显示`hello world`。
 
-需要注意的是，虽然调用close方法之后，无法再用write方法写入内容，但这时当前页面的其他DOM节点还是会继续加载。
-
-```html
-<html>
-<head>
-<title>write example</title>
-<script type="text/javascript">
-  document.open();
-  document.write("hello");
-  document.close();
-</script>
-</head>
-<body>
-world
-</body>
-</html>
-```
-
-在浏览器打开上面网页，将会显示“hello world”。
-
-总之，除了某些特殊情况，应该尽量避免使用`document.write`这个方法。
+`document.write`是JavaScript语言标准化之前就存在的方法，现在完全有更符合标准的方法向文档写入内容（比如对`innerHTML`属性赋值）。所以，除了某些特殊情况，应该尽量避免使用`document.write`这个方法。
 
 `document.writeln`方法与`write`方法完全一致，除了会在输出内容的尾部添加换行符。
 
@@ -429,7 +422,7 @@ document.writeln(2);
 //
 ```
 
-注意，`writeln`方法添加的是ASCII码的换行符，渲染成HTML网页时不起作用。
+注意，`writeln`方法添加的是ASCII码的换行符，渲染成HTML网页时不起作用，即在网页上显示不出换行。
 
 ## 查找节点的方法
 
@@ -514,7 +507,6 @@ var spans = firstPara.getElementsByTagName('span');
 `document.getElementsByClassName`方法返回一个类似数组的对象（`HTMLCollection`实例对象），包括了所有`class`名字符合指定条件的元素，元素的变化实时反映在返回结果中。
 
 ```javascript
-// document对象上调用
 var elements = document.getElementsByClassName(names);
 ```
 
@@ -539,15 +531,13 @@ var elements = rootElement.getElementsByClassName(names);
 
 ### document.getElementsByName()
 
-`document.getElementsByName`方法用于选择拥有`name`属性的HTML元素（比如`<form>`、`<img>`、`<frame>`、`<embed>`和`<object>`等），返回一个类似数组的的对象（`NodeList`对象的实例）。
+`document.getElementsByName`方法用于选择拥有`name`属性的HTML元素（比如`<form>`、`<radio>`、`<img>`、`<frame>`、`<embed>`和`<object>`等），返回一个类似数组的的对象（`NodeList`对象的实例），因为`name`属性相同的元素可能不止一个。
 
 ```javascript
 // 表单为 <form name="x"></form>
 var forms = document.getElementsByName('x');
 forms[0].tagName // "FORM"
 ```
-
-注意，`getElementsByName`返回的结果不会实时反映网页元素的变化。
 
 ### getElementById()
 
@@ -572,13 +562,15 @@ document.querySelector('#myElement')
 
 ### document.elementFromPoint()
 
-`document.elementFromPoint`方法返回位于页面指定位置的元素。
+`document.elementFromPoint`方法返回位于页面指定位置最上层的Element子节点。
 
 ```javascript
-var element = document.elementFromPoint(x, y);
+var element = document.elementFromPoint(50, 50);
 ```
 
-上面代码中，`elementFromPoint`方法的参数`x`和`y`，分别是相对于当前窗口左上角的横坐标和纵坐标，单位是像素。`elementFromPoint`方法返回位于这个位置的DOM元素，如果该元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值），则返回`null`。
+上面代码选中在`(50, 50)`这个坐标位置的最上层的那个HTML元素。
+
+`elementFromPoint`方法的两个参数，依次是相对于当前视口左上角的横坐标和纵坐标，单位是像素。如果位于该位置的HTML元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值或超过视口大小），则返回`null`。
 
 ## 生成节点的方法
 
@@ -822,3 +814,7 @@ document.getElementById("container").appendChild(newNode);
 ```
 
 上面代码从`iframe`窗口，拷贝一个指定节点`myNode`，插入当前文档。
+
+### document.getSelection()
+
+这个方法指向`window.getSelection()`，参见`window`对象一节的介绍。
