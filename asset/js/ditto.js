@@ -323,13 +323,13 @@ function router() {
 
     if (sectionId) {
       $('html, body').animate({
-        scrollTop: ($('#' + decodeURI(sectionId)).offset().top)
+        scrollTop: ($('#' + decodeURI(sectionId)).offset().top - 20)
       }, 300);
     } else {
       if (location.hash !== '' || Boolean(perc)) {
         if (!Boolean(perc)) {
           $('html, body').animate({
-            scrollTop: ($('#content').offset().top)
+            scrollTop: ($('#content').offset().top - 20)
           }, 300);
         } else {
           $('html, body').animate({
