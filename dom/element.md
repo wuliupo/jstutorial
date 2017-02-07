@@ -101,15 +101,15 @@ d.nodeName // "DIV"
 
 ### Element.className，Element.classList
 
-className属性用来读取和设置当前元素的class属性。它的值是一个字符串，每个class之间用空格分割。
+`className`属性用来读写当前元素节点的`class`属性。它的值是一个字符串，每个`class`之间用空格分割。
 
-classList属性则返回一个类似数组的对象，当前元素节点的每个class就是这个对象的一个成员。
+`classList`属性则返回一个类似数组的对象，当前元素节点的每个`class`就是这个对象的一个成员。
 
 ```html
 <div class="one two three" id="myDiv"></div>
 ```
 
-上面这个`div`元素的节点对象的`className`属性和c`lassList`属性，分别如下。
+上面这个`div`元素的节点对象的`className`属性和`classList`属性，分别如下。
 
 ```javascript
 document.getElementById('myDiv').className
@@ -212,7 +212,7 @@ rootElement.clientWidth === window.innerWidth // true
 document.documentElement.scrollHeight
 ```
 
-如果内容正好适合它的容器，没有溢出，那么`Element.scrollHeight`和`Element.clientHeight`是相等的，`scrollWidth`属性与`clientHeight`属性是相等的。如果存在溢出，那么`scrollHeight`属性大于`clientHeight`属性，`scrollWidth`属性大于`clientHeight`属性。
+如果内容正好适合它的容器，没有溢出，那么`Element.scrollHeight`和`Element.clientHeight`是相等的，`scrollWidth`属性与`clientWidth`属性是相等的。如果存在溢出，那么`scrollHeight`属性大于`clientHeight`属性，`scrollWidth`属性大于`clientWidth`属性。
 
 存在溢出时，当滚动条滚动到内容底部时，下面的表达式为`true`。
 
@@ -250,7 +250,9 @@ document.body.scrollTop
 
 ### Element.offsetHeight，Element.offsetWidth
 
-`Element.offsetHeight`属性返回元素的垂直高度，`Element.offsetWidth`属性返回水平宽度，可以理解成元素右下角距离左上角的位移。这两个属性值包括`Padding`和`Border`、以及滚动条，也就是说从边框的左上角开始计算，这也意味着，`Element.offsetHeight`只比`Element.clientHeight`少了边框的高度。它们的单位为像素，都是只读。
+`Element.offsetHeight`属性返回元素的垂直高度，`Element.offsetWidth`属性返回水平宽度。`offsetHeight`可以理解成元素左下角距离左上角的位移，`offsetWidth`是元素右上角距离左上角的位移。它们的单位为像素，都是只读。
+
+这两个属性值包括`Padding`和`Border`、以及滚动条。这也意味着，如果不存在内容溢出，`Element.offsetHeight`只比`Element.clientHeight`多了边框的高度。
 
 整张网页的高度，可以在`document.documentElement`和`document.body`上读取。
 
@@ -266,7 +268,7 @@ document.body.offsetWidth
 
 ### Element.offsetLeft，Element.offsetTop
 
-`Element.offsetLeft`返回当前元素左上角相对于`Element.offsetParent`节点的垂直偏移，`Element.offsetTop`返回水平位移，单位为像素。通常，这两个值是指相对于父节点的位移。
+`Element.offsetLeft`返回当前元素左上角相对于`Element.offsetParent`节点的水平位移，`Element.offsetTop`返回垂直位移，单位为像素。通常，这两个值是指相对于父节点的位移。
 
 下面的代码可以算出元素左上角相对于整张网页的坐标。
 
@@ -335,23 +337,23 @@ Element.getBoundingClientRect().top
 
 ```javascript
 // 网页元素左上角的网页横坐标
-Element.getBoundingClientRect().left + document.body.scrollLeft
+Element.getBoundingClientRect().left + document.documentElement.scrollLeft
 
 // 网页元素左上角的网页纵坐标
-Element.getBoundingClientRect().top + document.body.scrollTop
+Element.getBoundingClientRect().top + document.documentElement.scrollTop
 ```
 
-网页目前滚动的距离，可以从`document.body`对象上得到。
+网页目前滚动的距离，可以从`document.documentElement`节点上得到。
 
 ```javascript
 // 网页滚动的水平距离
-document.body.scrollLeft
+document.documentElement.scrollLeft
 
 // 网页滚动的垂直距离
-document.body.scrollTop
+document.documentElement.scrollTop
 ```
 
-网页元素本身的高度和宽度（不含overflow溢出的部分），通过`offsetHeight`和`offsetWidth`属性（包括Padding和Border）或`Element.getBoundingClientRect`方法获取。
+网页元素本身的高度和宽度（不含overflow溢出的部分），通过`offsetHeight`和`offsetWidth`属性（包括`Padding`和`Border`）或`Element.getBoundingClientRect`方法获取。
 
 ```javascript
 // 网页元素的高度

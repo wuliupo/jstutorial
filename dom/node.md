@@ -91,7 +91,7 @@ document.querySelector('a').nodeType === Node.ELEMENT_NODE
 
 `Node.nodeValue`属性返回一个字符串，表示当前节点本身的文本值，该属性可读写。
 
-由于只有Text节点、Comment节点、XML文档的CDATA节点有问文本值，因此只有这三类节点的`nodeValue`可以返回结果，其他类型的节点一律返回`null`。同样的，也只有这三类节点可以设置`nodeValue`属性的值。对于那些返回`null`的节点，设置`nodeValue`属性是无效的。
+由于只有Text节点、Comment节点、XML文档的CDATA节点有文本值，因此只有这三类节点的`nodeValue`可以返回结果，其他类型的节点一律返回`null`。同样的，也只有这三类节点可以设置`nodeValue`属性的值。对于那些返回`null`的节点，设置`nodeValue`属性是无效的。
 
 ### Node.textContent
 
@@ -695,9 +695,9 @@ document.lastElementChild.nodeName
 
 childElementCount属性返回当前节点的所有Element子节点的数目。
 
-### ChildNode接口
+### ChildNode 接口
 
-ChildNode接口用于处理子节点（包含但不限于Element子节点）。Element节点、DocumentType节点和CharacterData接口，部署了ChildNode接口。凡是这三类节点（接口），都可以使用下面四个方法。但是现实的情况是，除了第一个remove方法，目前没有浏览器支持后面三个方法。
+`ChildNode`接口用于处理子节点（包含但不限于`Element`子节点）。`Element`节点、`DocumentType`节点和`CharacterData`接口，部署了`ChildNode`接口。凡是这三类节点（接口），都可以使用下面四个方法。
 
 **（1）remove()**
 
@@ -707,7 +707,7 @@ remove方法用于移除当前节点。
 el.remove()
 ```
 
-上面方法在DOM中移除了el节点。注意，调用这个方法的节点，是被移除的节点本身，而不是它的父节点。
+上面方法在DOM中移除了`el`节点。注意，调用这个方法的节点，是被移除的节点本身，而不是它的父节点。
 
 **（2）before()**
 

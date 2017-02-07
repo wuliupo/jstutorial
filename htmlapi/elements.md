@@ -112,7 +112,7 @@ document.forms.myforms;
 
 如果`<form>`元素带有`name`或者`id`属性，这个元素节点会自动成为`window`和`document`的属性，并且可以从`document.forms`上取到。`<form name="myForm">`节点用下面几种方法可以拿到。
 
-```javascirpt
+```javascript
 window.myForm
 document.myForm
 document.forms.myForm
@@ -126,7 +126,7 @@ document.forms[n]
 ```javascript
 document.forms.myForm[0]
 document.forms.myForm.address
-document.myForm.address // 只对name属性生效，对id属性不生效
+document.myForm.address
 ```
 
 表单节点都有一个`elements`属性，包含了当前表单的所有子元素，所以也可以用下面的方法取到`address`子节点。
@@ -250,7 +250,7 @@ element.options.length
 
 `<option>`元素用于在下拉列表（`<select>`）中生成下拉选项。每个下拉选项就是一个`Option`对象，它有以下属性。
 
-- `selectd`：返回一个布尔值，表示用户是否选中该选项。
+- `selected`：返回一个布尔值，表示用户是否选中该选项。
 - `text`：返回该下拉选项的显示的文本。该属性可读写，可用来显示向用户显示的文本。
 - `value`：返回该下拉选项的值，即向服务器发送的那个值。该属性可读写。
 - `defaultSelected`：返回一个布尔值，表示这个下拉选项是否默认选中。
