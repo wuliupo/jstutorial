@@ -261,7 +261,8 @@ function show_error() {
 }
 
 function show_loading() {
-  var loading = $(ditto.loading_id).show().html('');  // clear content
+  var loading = $(ditto.loading_id).show();  // clear content
+  $(ditto.content_id).html('');
 
   // infinite loop until clearInterval() is called on loading
   return setInterval(function() {
@@ -304,7 +305,7 @@ function router() {
     $(ditto.error_id).hide();
 	data = data.replace('---', '```').replace('---', '```');
 	// TODO regexp
-	var title = data.substring(data.indexOf('title: ') + 7, data.indexOf('layout: '));
+	var title = data.indexOf('title: ') > 0 ? data.substring(data.indexOf('title: ') + 7, data.indexOf('layout: ')) : 'Content';
     $(ditto.content_id).html(marked(data)).prepend('<h1>' + title + '</h1>');
     if ($(ditto.content_id + " h1").text() === ditto.document_title) {
       document.title = ditto.document_title;
