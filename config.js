@@ -1,7 +1,4 @@
 var CONFIG = {
-  // your website's title
-  document_title: "JavaScript 标准参考教程",
-
   // index page
   index: "README.md",
 
