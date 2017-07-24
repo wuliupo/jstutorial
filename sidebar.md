@@ -49,7 +49,8 @@
   1. [Element节点](#dom/element)
   1. [属性的操作](#dom/attribute)
   1. [Text节点和DocumentFragment节点](#dom/text)
-  1. [Event对象](#dom/event)
+  1. [Event模型](#dom/event)
+  1. [Event类型](#dom/event-type)
   1. [CSS操作](#dom/css)
   1. [Mutation Observer](#dom/mutationobserver)
 1. 浏览器环境
