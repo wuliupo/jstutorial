@@ -98,7 +98,7 @@ x
 var a, b;
 ```
 
-JavaScirpt是一种动态类型语言，也就是说，变量的类型没有限制，可以赋予各种类型的值。
+JavaScript 是一种动态类型语言，也就是说，变量的类型没有限制，可以赋予各种类型的值。
 
 ```javascript
 var a = 1;
@@ -397,7 +397,7 @@ var x = 1;
 
 switch (x) {
   case 1:
-    console.log('x 于1');
+    console.log('x 等于1');
   case 2:
     console.log('x 等于2');
   default:

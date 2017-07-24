@@ -110,7 +110,7 @@ function validate(obj, lowval, hival){
 
 上面代码是一个文本输入框，每当用户输入一个值，就会调用`onChange`回调函数，验证这个值是否在指定范围。回调函数传入`this`，就代表传入当前对象（即文本框），然后就可以从`this.value`上面读到用户的输入值。
 
-总结一下，JavaScript语言之中，一切皆对象，运行环境也是对象，所以函数都是在某个对象之中运行，`this`就是这个对象（环境）。这本来并不会让用户糊涂，但是JavaScript支持运行环境动态切换，也就是说，`this`的指向是动态的，没有办法事先确定到底指向哪个对象，这才是最让初学者感到困惑的地方。
+总结一下，JavaScript 语言之中，一切皆对象，运行环境也是对象，所以函数都是在某个对象之中运行，`this`就是这个对象（环境）。这本来并不会让用户糊涂，但是 JavaScript 支持运行环境动态切换，也就是说，`this`的指向是动态的，没有办法事先确定到底指向哪个对象，这才是最让初学者感到困惑的地方。
 
 如果一个函数在全局环境中运行，那么`this`就是指顶层对象（浏览器中为`window`对象）。
 
@@ -158,7 +158,7 @@ Obj.prototype.m = function() {
 };
 ```
 
-上面代码定义了一个构造函数`Obj`。由于`this`指向实例对象，所以在构造函数内部定义`this.p`，就相当于定义实例对象有一个`p`属性；然后`m`方法可以返回这个p属性。
+上面代码定义了一个构造函数`Obj`。由于`this`指向实例对象，所以在构造函数内部定义`this.p`，就相当于定义实例对象有一个`p`属性；然后`m`方法可以返回这个`p`属性。
 
 ```javascript
 var o = new Obj('Hello World!');
@@ -169,7 +169,7 @@ o.m() // "Hello World!"
 
 **（3）对象的方法**
 
-当A对象的方法被赋予B对象，该方法中的`this`就从指向A对象变成了指向B对象。所以要特别小心，将某个对象的方法赋值给另一个对象，会改变`this`的指向。
+当 A 对象的方法被赋予 B 对象，该方法中的`this`就从指向 A 对象变成了指向 B 对象。所以要特别小心，将某个对象的方法赋值给另一个对象，会改变`this`的指向。
 
 请看下面的代码。
 
@@ -198,15 +198,19 @@ obj.foo() // obj
 (1, obj.foo)() // window
 ```
 
-上面代码中，`obj.foo`先运算再执行，即使它的值根本没有变化，`this`也不再指向`obj`了。
+上面代码中，`obj.foo`先运算再执行，即使值根本没有变化，`this`也不再指向`obj`了。这是因为这时它就脱离了运行环境`obj`，而是在全局环境执行。
 
-可以这样理解，在JavaScript引擎内部，`obj`和`obj.foo`储存在两个内存地址，简称为`M1`和`M2`。只有`obj.foo()`这样调用时，是从`M1`调用`M2`，因此`this`指向`obj`。但是，上面三种情况，都是直接取出`M2`进行运算，然后就在全局环境执行运算结果（还是`M2`），因此`this`指向全局环境。
+可以这样理解，在 JavaScript 引擎内部，`obj`和`obj.foo`储存在两个内存地址，简称为`M1`和`M2`。只有`obj.foo()`这样调用时，是从`M1`调用`M2`，因此`this`指向`obj`。但是，上面三种情况，都是直接取出`M2`进行运算，然后就在全局环境执行运算结果（还是`M2`），因此`this`指向全局环境。
 
 上面三种情况等同于下面的代码。
 
 ```javascript
 // 情况一
 (obj.foo = function () {
+  console.log(this);
+})()
+// 等同于
+(function () {
   console.log(this);
 })()
 
@@ -221,7 +225,51 @@ obj.foo() // obj
 })()
 ```
 
-同样的，如果某个方法位于多层对象的内部，这时为了简化书写，把该方法赋值给一个变量，往往会得到意料之外的结果。
+如果某个方法位于多层对象的内部，这时`this`只是指向当前一层的对象，而不会继承更上面的层。
+
+```javascript
+var a = {
+  p: 'Hello',
+  b: {
+    m: function() {
+      console.log(this.p);
+    }
+  }
+};
+
+a.b.m() // undefined
+```
+
+上面代码中，`a.b.m`方法在`a`对象的第二层，该方法内部的`this`不是指向`a`，而是指向`a.b`。这是因为实际执行的是下面的代码。
+
+```javascript
+var b = {
+  m: function() {
+   console.log(this.p);
+};
+
+var a = {
+  p: 'Hello',
+  b: b
+};
+
+(a.b).m() // 等同于 b.m()
+```
+
+如果要达到预期效果，只有写成下面这样。
+
+```javascript
+var a = {
+  b: {
+    m: function() {
+      console.log(this.p);
+    },
+    p: 'Hello'
+  }
+};
+```
+
+如果这时将嵌套对象内部的方法赋值给一个变量，`this`依然会指向全局对象。
 
 ```javascript
 var a = {
@@ -244,21 +292,9 @@ var hello = a.b;
 hello.m() // Hello
 ```
 
-**（4）Node**
-
-在Node中，`this`的指向又分成两种情况。全局环境中，`this`指向全局对象`global`；模块环境中，`this`指向module.exports。
-
-```javascript
-// 全局环境
-this === global // true
-
-// 模块环境
-this === module.exports // true
-```
-
 ## 使用注意点
 
-**（1）避免多层this**
+**（1）避免多层 this**
 
 由于`this`的指向是不确定的，所以切勿在函数中包含多层的`this`。
 
@@ -502,7 +538,7 @@ obj.hasOwnProperty('toString') // true
 Object.prototype.hasOwnProperty.call(obj, 'toString') // false
 ```
 
-上面代码中，`hasOwnProperty`是`obj`对象继承的方法，如果这个方法一旦被覆盖，就不会得到正确结果。`call`方法可以解决这个方法，它将`hasOwnProperty`方法的原始定义放到`obj`对象上执行，这样无论`obj`上有没有同名方法，都不会影响结果。
+上面代码中，`hasOwnProperty`是`obj`对象继承的方法，如果这个方法一旦被覆盖，就不会得到正确结果。`call`方法可以解决这个问题，它将`hasOwnProperty`方法的原始定义放到`obj`对象上执行，这样无论`obj`上有没有同名方法，都不会影响结果。
 
 ### function.prototype.apply()
 
@@ -665,7 +701,7 @@ count // NaN
 
 上面代码中，函数`func`是在全局环境中运行的，这时`inc`内部的`this`指向顶层对象`window`，所以`counter.count`是不会变的，反而创建了一个全局变量`count`。因为`window.count`原来等于`undefined`，进行递增运算后`undefined++`就等于`NaN`。
 
-为了解决这个问题，可以使用`this`方法，将`inc`内部的`this`绑定到`counter`对象。
+为了解决这个问题，可以使用`bind`方法，将`inc`内部的`this`绑定到`counter`对象。
 
 ```javascript
 var func = counter.inc.bind(counter);
@@ -852,7 +888,7 @@ Array.prototype.slice.call([1, 2, 3], 0, 1)
 // [1]
 ```
 
-上面的代码中，数组的slice方法从`[1, 2, 3]`里面，按照指定位置和长度切分出另一个数组。这样做的本质是在`[1, 2, 3]`上面调用`Array.prototype.slice`方法，因此可以用`call`方法表达这个过程，得到同样的结果。
+上面的代码中，数组的`slice`方法从`[1, 2, 3]`里面，按照指定位置和长度切分出另一个数组。这样做的本质是在`[1, 2, 3]`上面调用`Array.prototype.slice`方法，因此可以用`call`方法表达这个过程，得到同样的结果。
 
 `call`方法实质上是调用`Function.prototype.call`方法，因此上面的表达式可以用`bind`方法改写。
 
@@ -862,7 +898,7 @@ var slice = Function.prototype.call.bind(Array.prototype.slice);
 slice([1, 2, 3], 0, 1) // [1]
 ```
 
-可以看到，利用bind方法，将`[1, 2, 3].slice(0, 1)`变成了`slice([1, 2, 3], 0, 1)`的形式。这种形式的改变还可以用于其他数组方法。
+可以看到，利用`bind`方法，将`[1, 2, 3].slice(0, 1)`变成了`slice([1, 2, 3], 0, 1)`的形式。这种形式的改变还可以用于其他数组方法。
 
 ```javascript
 var push = Function.prototype.call.bind(Array.prototype.push);

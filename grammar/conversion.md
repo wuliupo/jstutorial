@@ -6,7 +6,7 @@ date: 2013-04-13
 modifiedOn: 2013-12-05
 ---
 
-JavaScript是一种动态类型语言，变量没有类型限制，可以随时赋予任意值。
+JavaScript 是一种动态类型语言，变量没有类型限制，可以随时赋予任意值。
 
 ```javascript
 var x = y ? 1 : 'a';
@@ -79,28 +79,29 @@ Number('\t\v\r12.34\n') // 12.34
 
 **（2）对象的转换规则**
 
-简单的规则是，`Number`方法的参数是对象时，将返回`NaN`。
+简单的规则是，`Number`方法的参数是对象时，将返回`NaN`，除非是包含单个数值的数组。
 
 ```javascript
 Number({a: 1}) // NaN
 Number([1, 2, 3]) // NaN
+Number([5]) // 5
 ```
 
-实际上，`Number`背后的真正规则复杂得多，内部处理步骤如下。
+之所以会这样，是因为`Number`背后的转换规则比较复杂。
 
 1. 调用对象自身的`valueOf`方法。如果返回原始类型的值，则直接对该值使用`Number`函数，不再进行后续步骤。
 
-2. 如果`valueOf`方法返回的还是对象，则改为调用对象自身的`toString`方法。如果返回原始类型的值，则对该值使用`Number`函数，不再进行后续步骤。
+2. 如果`valueOf`方法返回的还是对象，则改为调用对象自身的`toString`方法。如果`toString`方法返回原始类型的值，则对该值使用`Number`函数，不再进行后续步骤。
 
 3. 如果`toString`方法返回的是对象，就报错。
 
 请看下面的例子。
 
 ```javascript
-Number(obj)
+var obj = {x: 1};
+Number(obj) // NaN
 
 // 等同于
-
 if (typeof obj.valueOf() === 'object') {
   Number(obj.toString());
 } else {
@@ -108,7 +109,7 @@ if (typeof obj.valueOf() === 'object') {
 }
 ```
 
-上面代码中，`Number`函数将`obj`对象转为数值。首先，调用`obj.valueOf`方法, 结果返回对象本身；于是，继续调用`obj.toString`方法，这时返回字符串`[object Object]`，对这个字符串使用`Number`函数，得到`NaN`。
+上面代码中，`Number`函数将`obj`对象转为数值。背后发生了一连串的操作，首先调用`obj.valueOf`方法, 结果返回对象本身；于是，继续调用`obj.toString`方法，这时返回字符串`[object Object]`，对这个字符串使用`Number`函数，得到`NaN`。
 
 默认情况下，对象的`valueOf`方法返回对象本身，所以一般总是会调用`toString`方法，而`toString`方法返回对象的类型字符串（比如`[object Object]`）。所以，会有下面的结果。
 
@@ -197,7 +198,7 @@ String([1, 2, 3]) // "1,2,3"
 
 1. 先调用对象自身的`toString`方法。如果返回原始类型的值，则对该值使用`String`函数，不再进行以下步骤。
 
-2. 如果`toString`方法返回的是对象，再调用`valueOf`方法。如果返回原始类型的值，则对该值使用`String`函数，不再进行以下步骤。
+2. 如果`toString`方法返回的是对象，再调用原对象的`valueOf`方法。如果`valueOf`方法返回原始类型的值，则对该值使用`String`函数，不再进行以下步骤。
 
 3. 如果`valueOf`方法返回的是对象，就报错。
 

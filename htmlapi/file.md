@@ -311,7 +311,7 @@ function readFile(file){
     applyDataUrlToCanvas( reader.result );
   };
 
-  reader.reaAsDataURL(file);
+  reader.readAsDataURL(file);
 }
 
 {% endhighlight %}
@@ -398,7 +398,7 @@ var info = document.createElement("span");
 
 info.innerHTML = files[i].name + ": " + files[i].size + " bytes";
 
-body.appendChild(info);
+document.querySelector('body').appendChild(info);
 
 {% endhighlight %}
 
