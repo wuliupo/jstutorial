@@ -1,4 +1,4 @@
-# [JS 标准参考教程](./)
+# [JS 标准参考教程](#)
 
 作者：[阮一峰](http://www.ruanyifeng.com)
 
